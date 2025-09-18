@@ -2,3 +2,5 @@
 inventory/hosts
 vars/config.yml
 files/*
+test_ansible.yml
+bare-metal/*

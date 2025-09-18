@@ -1,5 +1,5 @@
 ---
-# KVM host IP and name of NIC
+# KVM host IP and name of NIC, which will be consumed by dnsmaq and nat
 # e.g. 192.168.0.100 (do not input 127.0.0.1), enp2s0f0
 kvm_host:
   ip: <IP addr>
@@ -30,8 +30,8 @@ kvm_host:
 # use_rootfs:       RHCOS 4.6+ requires rootfs. (true|false)
 openshift:
   dist: ocp
-  install_version: 4.7.1
-  coreos_version:  4.7.0
+  install_version: 4.18.44
+  coreos_version:  4.18.0
   use_rootfs:      true
 
 #  dist: okd
@@ -53,7 +53,7 @@ key:
 #    true:  remove old files
 #    false: stay old files
 cleanup:
-  conf: true
+  conf: false
   bin:  false
 
 # DNS hack for libvirt

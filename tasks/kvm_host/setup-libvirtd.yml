@@ -32,3 +32,45 @@
     command: create
     name: openshift
     state: active
+
+- name: Gather information about existing libvirt storage pools
+  community.libvirt.virt_pool:
+    command: facts
+  register: libvirt_pools_facts
+  changed_when: false
+  check_mode: no # This task should always run to gather facts
+
+- name: Ensure target directory for the libvirt pool exists
+  ansible.builtin.file:
+    # The path is configurable via 'libvirt_pool_path' in values.yml,
+    # with a default value if not specified.
+    path: "{{ libvirt_pool_path | default('/home/libvirtd/images') }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Remove existing 'openshift' pool to ensure a clean state
+  community.libvirt.virt_pool:
+    name: openshift
+    state: absent
+  when: "'openshift' in (libvirt_pools_facts.libvirt_pools | default({}))"
+
+- name: Define the 'openshift' libvirt pool
+  community.libvirt.virt_pool:
+    name: "openshift"
+    state: present # Ensures the pool configuration is defined.
+    xml: "{{lookup('file', '{{ files.base }}/conf/libvirtd.pool-openshift.xml')}}"
+
+- name: Activate the 'openshift' libvirt pool
+  community.libvirt.virt_pool:
+    name: "openshift"
+    state: active # Ensures the pool is running.
+
+- name: Ensure the 'openshift' libvirt pool is set to autostart
+  ansible.builtin.command: "virsh pool-autostart --pool openshift"
+  # This command is idempotent itself (running it again does nothing), so we
+  # don't need complex change tracking. We check the current state instead.
+  register: autostart_status
+  changed_when: "'marked as autostarted' in autostart_status.stdout"
+

@@ -10,6 +10,7 @@
     - include_tasks: tasks/base/mk_files-dir.yml
     - include_tasks: tasks/base/mk_dnsmasq-conf.yml
     - include_tasks: tasks/base/mk_libvirtd-conf.yml
+    - include_tasks: tasks/base/mk_libvirt-pool.yml
     - include_tasks: tasks/base/mk_nginx-conf.yml
     - include_tasks: tasks/base/mk_boot-ipxe-cfg.yml
     - include_tasks: tasks/base/mk_openshift-install-config.yml
